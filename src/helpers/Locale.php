@@ -9,6 +9,7 @@ namespace craft\commerce\helpers;
 
 use Craft;
 use craft\helpers\ArrayHelper;
+use craft\i18n\Locale as BaseLocale;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
 
@@ -17,24 +18,28 @@ use yii\base\InvalidConfigException;
  *
  * @author Pixel & Tonic, Inc. <support@pixelandtonic.com>
  * @since 3.2.13
- */
+ */     
 class Locale
 {
     /**
      * Set language of the application
      *
      * @param string $toLanguage
-     * @param string|null $formattingLocale
+     * @param BaseLocale|string|null $formattingLocale
      * @throws InvalidConfigException
      * @TODO rename `toLanguage` to `locale` in Commerce 5
      */
-    public static function switchAppLanguage(string $toLanguage, ?string $formattingLocale = null): void
+    public static function switchAppLanguage(string $toLanguage, mixed $formattingLocale = null): void
     {
         Craft::$app->language = $toLanguage;
         $locale = Craft::$app->getI18n()->getLocaleById($toLanguage);
         Craft::$app->set('locale', $locale);
 
         if ($formattingLocale !== null) {
+            if ($formattingLocale instanceof BaseLocale) {
+                $formattingLocale = $formattingLocale->id;
+            }
+            
             $locale = Craft::$app->getI18n()->getLocaleById($formattingLocale);
         }
 
